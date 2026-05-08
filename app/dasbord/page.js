@@ -6,6 +6,9 @@ export default function Dashboard() {
   const [shortUrl, setShortUrl] = useState("");
   const [copyStatus, setCopyStatus] = useState("Copy Link");
   const [msg, setMsg] = useState({ text: "", type: "" });
+  
+  // State untuk misahin tampilan V1 dan V2
+  const [mode, setMode] = useState("v1");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,14 +17,15 @@ export default function Dashboard() {
     setShortUrl("");
 
     const form = e.target;
-    let target_url = form.target_url.value;
-    let id = form.id.value;
-    const mode = form.mode.value;
+    const target_url = form.target_url.value;
 
-    // 1. Generate ID Otomatis kalau dikosongin
-    if (!id) {
-      id = Math.random().toString(36).substring(2, 8);
-    }
+    // Generate ID acak 6 karakter otomatis (tanpa input user)
+    const id = Math.random().toString(36).substring(2, 8);
+
+    // Ambil data meta kalau form-nya ada (Mode V2)
+    const title = form.title ? form.title.value : "";
+    const description = form.description ? form.description.value : "";
+    const image_url = form.image_url ? form.image_url.value : "";
 
     try {
       const res = await fetch("/api/shorten", {
@@ -31,20 +35,20 @@ export default function Dashboard() {
           id,
           target_url,
           mode,
-          title: form.title?.value || "",
-          description: form.description?.value || "",
-          image_url: form.image_url?.value || ""
+          title,
+          description,
+          image_url
         }),
       });
 
       const data = await res.json();
 
       if (data.success) {
-        // Bikin URL lengkap sesuai domain saat ini
+        // Gabungin domain web lo sama ID acaknya
         const finalUrl = `${window.location.origin}/${id}`;
         setShortUrl(finalUrl);
-        setMsg({ text: "URL berhasil dibuat!", type: "success" });
-        form.reset(); // Bersihkan form
+        setMsg({ text: "URL berhasil dibuat otomatis!", type: "success" });
+        form.reset();
       } else {
         setMsg({ text: "Gagal: " + data.error, type: "danger" });
       }
@@ -58,10 +62,8 @@ export default function Dashboard() {
   const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl);
     setCopyStatus("Tersalin!");
-    // Kembalikan teks tombol setelah 2 detik
-    setTimeout(() => {
-      setCopyStatus("Copy Link");
-    }, 2000);
+    // Balikin teks tombol setelah 2 detik
+    setTimeout(() => setCopyStatus("Copy Link"), 2000);
   };
 
   return (
@@ -73,7 +75,21 @@ export default function Dashboard() {
           </div>
           <div className="panel-body">
             
-            {/* Pesan Sukses / Error Tanpa Alert JS */}
+            {/* Tombol Pemisah V1 dan V2 */}
+            <ul className="nav nav-pills" style={{ marginBottom: '20px' }}>
+              <li className={mode === "v1" ? "active" : ""}>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMode("v1"); setShortUrl(""); setMsg({text:"", type:""}); }}>
+                  V1 (Direct / Langsung)
+                </a>
+              </li>
+              <li className={mode === "v2" ? "active" : ""}>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMode("v2"); setShortUrl(""); setMsg({text:"", type:""}); }}>
+                  V2 (Meta / Safelink)
+                </a>
+              </li>
+            </ul>
+
+            {/* Notifikasi Sukses/Gagal */}
             {msg.text && (
               <div className={`alert alert-${msg.type}`} style={{ padding: '10px', marginBottom: '15px' }}>
                 {msg.text}
@@ -82,55 +98,40 @@ export default function Dashboard() {
 
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>URL Tujuan (Target)</label>
+                <label>URL Tujuan (Target Asli)</label>
                 <input type="url" name="target_url" className="form-control" placeholder="https://link-panjang.com/..." required />
               </div>
 
-              <div className="row">
-                <div className="col-md-6">
+              {/* Tampilkan form Meta HANYA kalau tombol V2 ditekan */}
+              {mode === "v2" && (
+                <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '5px', border: '1px solid #ddd', marginBottom: '15px' }}>
+                  <p className="text-muted"><small><i>Pengaturan tampilan untuk Share di Facebook/WA</i></small></p>
                   <div className="form-group">
-                    <label>Custom ID (Opsional)</label>
-                    <input type="text" name="id" className="form-control" placeholder="Kosongkan untuk acak otomatis" />
+                    <label>Judul Meta</label>
+                    <input type="text" name="title" className="form-control" placeholder="Judul untuk tampil di sosmed" required />
+                  </div>
+                  <div className="form-group">
+                    <label>Deskripsi Meta</label>
+                    <textarea name="description" className="form-control" rows="2" placeholder="Deskripsi singkat..." required></textarea>
+                  </div>
+                  <div className="form-group">
+                    <label>URL Gambar (Thumbnail)</label>
+                    <input type="url" name="image_url" className="form-control" placeholder="https://..." required />
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label>Mode Redirect</label>
-                    <select name="mode" className="form-control">
-                      <option value="v1">V1 - Redirect Langsung</option>
-                      <option value="v2">V2 - Mode Meta / Safelink</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <hr />
-              <p className="text-muted"><small><i>*Isi bagian bawah ini jika menggunakan Mode V2</i></small></p>
-
-              <div className="form-group">
-                <label>Judul Meta</label>
-                <input type="text" name="title" className="form-control" placeholder="Judul untuk tampil di sosmed" />
-              </div>
-              <div className="form-group">
-                <label>Deskripsi Meta</label>
-                <textarea name="description" className="form-control" rows="2" placeholder="Deskripsi singkat..."></textarea>
-              </div>
-              <div className="form-group">
-                <label>URL Gambar (Thumbnail)</label>
-                <input type="url" name="image_url" className="form-control" placeholder="https://..." />
-              </div>
+              )}
 
               <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                {loading ? "Memproses..." : "Buat Short URL"}
+                {loading ? "Memproses..." : `Buat Link (${mode.toUpperCase()})`}
               </button>
             </form>
 
             {/* AREA RESULT & COPY BUTTON */}
             {shortUrl && (
-              <div style={{ marginTop: '25px', padding: '15px', backgroundColor: '#f9f9f9', border: '1px dashed #ccc', borderRadius: '4px' }}>
-                <label>Hasil Short URL:</label>
+              <div style={{ marginTop: '25px', padding: '15px', backgroundColor: '#eefbfa', border: '1px dashed #008080', borderRadius: '4px' }}>
+                <label>Hasil URL (ID Acak Otomatis):</label>
                 <div className="input-group">
-                  <input type="text" className="form-control" value={shortUrl} readOnly />
+                  <input type="text" className="form-control" value={shortUrl} readOnly style={{ backgroundColor: '#fff' }} />
                   <span className="input-group-btn">
                     <button className="btn btn-success" type="button" onClick={handleCopy}>
                       {copyStatus}
