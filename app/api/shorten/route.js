@@ -3,15 +3,14 @@ import { encodeUrl } from "@/lib/encoder";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const body = await req.json();
-  const { id, target_url, mode, title, description, image_url } = body;
-
-  const encodedUrl = encodeUrl(target_url);
-
   try {
+    const body = await req.json();
+    const { id, target_url, mode, title, description, image_url } = body;
+    const encoded = encodeUrl(target_url);
+
     await turso.execute({
       sql: "INSERT INTO urls (id, target_url, mode, title, description, image_url) VALUES (?, ?, ?, ?, ?, ?)",
-      args: [id, encodedUrl, mode, title || null, description || null, image_url || null]
+      args: [id, encoded, mode, title || null, description || null, image_url || null]
     });
     return NextResponse.json({ success: true });
   } catch (e) {
