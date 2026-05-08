@@ -1,22 +1,31 @@
-import "./globals.css"; // Opsional jika butuh tambahan CSS
-import { getSetting } from "@/lib/settings";
+import "./globals.css";
+import { getSetting } from "@/lib/turso";
+
+export const dynamic = 'force-dynamic';
 
 export default async function RootLayout({ children }) {
-  // Ambil data dari database untuk Meta Global
-  const siteName = await getSetting("site_name");
-  const favicon = await getSetting("meta_icon");
+  let siteName = "ShortenURL";
+  let favicon = "/favicon.ico";
+
+  try {
+    const dbSiteName = await getSetting("site_name");
+    const dbFavicon = await getSetting("meta_icon");
+    if (dbSiteName) siteName = dbSiteName;
+    if (dbFavicon) favicon = dbFavicon;
+  } catch (e) {}
 
   return (
     <html lang="id">
       <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-        
+        <link rel="icon" href={favicon} />
+        <title>{siteName}</title>
       </head>
-      <body style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
-        <nav className="navbar navbar-default">
-          <div className="container">
+      <body className="trim-box">
+        <nav className="navbar navbar-default" style={{ marginTop: '10px' }}>
+          <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="/">{siteName || "ShortenURL"}</a>
+              <a className="navbar-brand" href="/">{siteName}</a>
             </div>
             <ul className="nav navbar-nav navbar-right">
               <li><a href="/dasbord">Dashboard</a></li>
@@ -24,9 +33,7 @@ export default async function RootLayout({ children }) {
             </ul>
           </div>
         </nav>
-        <main className="container">
-          {children}
-        </main>
+        <main>{children}</main>
       </body>
     </html>
   );
