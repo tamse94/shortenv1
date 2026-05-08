@@ -22,7 +22,15 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: title,
       description: description,
-      images: image ? [image] : [],
+      // Tambahan resolusi gambar biar full di sosmed
+      images: image ? [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        }
+      ] : [],
       type: 'website',
     },
     twitter: {
@@ -34,11 +42,20 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function RedirectLayout({ children }) {
+export default async function RedirectLayout({ children }) {
+  // Tarik data ads_head dari database
+  const setRes = await turso.execute("SELECT value FROM settings WHERE key = 'ads_head'");
+  const adsHead = setRes.rows[0]?.value || "";
+
   return (
-    // Kelas ini bakal diatur di redirect.css
-    <section className="redirect-wrapper">
-      {children}
-    </section>
+    <>
+      {/* Script Monetag murni masuk ke head */}
+      {adsHead && <head dangerouslySetInnerHTML={{ __html: adsHead }} />}
+
+      {/* Kelas ini bakal diatur di redirect.css */}
+      <section className="redirect-wrapper">
+        {children}
+      </section>
+    </>
   );
 }
