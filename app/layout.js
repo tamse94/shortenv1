@@ -66,6 +66,13 @@ export default async function RootLayout({ children }) {
         <meta name="monetag" content="040fc680c5a16e17f2d1616e679831de" />
         {/* CSS ditaruh di head aman karena gak nge-block render sebanyak JS */}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+    <script 
+          src="https://quge5.com/88/tag.min.js" 
+          data-zone="237527" 
+          async 
+          data-cfasync="false"
+        ></script>
       </head>
       <body style={{ backgroundColor: '#f5f5f5', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         
@@ -91,14 +98,6 @@ export default async function RootLayout({ children }) {
           src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
           strategy="lazyOnload" 
         />
-          {/* Kode Script Monetag */}
-        <Script
-  src="https://quge5.com/88/tag.min.js"
-  data-zone="237527"
-  data-cfasync="false"
-  strategy="beforeInteractive" 
-/>
-
       </body>
     </html>
   );
