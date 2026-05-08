@@ -10,7 +10,7 @@ export default async function RootLayout({ children }) {
     <html lang="id">
       <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-        <link rel="icon" href={favicon || "/favicon.ico"} />
+        
       </head>
       <body style={{ backgroundColor: '#f5f5f5', padding: '20px' }}>
         <nav className="navbar navbar-default">
