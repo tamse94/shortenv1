@@ -1,41 +1,62 @@
 import "./globals.css";
 import { getSetting } from "@/lib/turso";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
-export default async function RootLayout({ children }) {
-  let siteName = "ShortenURL";
-  let favicon = "/favicon.ico";
+// Fungsi generateMetadata buat SEO Global yang Sangat Komplit
+export async function generateMetadata() {
+  const siteName = await getSetting("site_name") || "ShortenURL";
+  const description = await getSetting("site_description") || "Layanan pemendek URL cepat dan aman.";
+  const ogImage = await getSetting("og_image") || "";
 
-  try {
-    const dbSiteName = await getSetting("site_name");
-    const dbFavicon = await getSetting("meta_icon");
-    if (dbSiteName) siteName = dbSiteName;
-    if (dbFavicon) favicon = dbFavicon;
-  } catch (e) {}
+  return {
+    title: {
+      default: siteName,
+      template: `%s | ${siteName}`,
+    },
+    description: description,
+    icons: {
+      icon: (await getSetting("meta_icon")) || "/favicon.ico",
+    },
+    openGraph: {
+      title: siteName,
+      description: description,
+      images: ogImage ? [ogImage] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: siteName,
+      description: description,
+      images: ogImage ? [ogImage] : [],
+    }
+  };
+}
+
+export default async function RootLayout({ children }) {
+  const siteName = await getSetting("site_name") || "ShortenURL";
 
   return (
-    <html lang="id">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* Bootstrap 3 CSS */}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-        <link rel="icon" href={favicon} />
-        <title>{siteName}</title>
       </head>
-      <body style={{ backgroundColor: '#f5f5f5' }}>
-        {/* Memanggil komponen Navbar dengan data Site Name dari Database */}
+      <body style={{ backgroundColor: '#f5f5f5', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        
         <Navbar siteName={siteName} />
         
-        <div className="container">
+        <div className="container" style={{ flex: '1' }}>
           <main>
             {children}
           </main>
         </div>
 
-        {/* Script JQuery & Bootstrap JS biar menu HP bisa diklik */}
+        <Footer siteName={siteName} />
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       </body>
