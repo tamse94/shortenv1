@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
-// Fungsi generateMetadata buat SEO Global yang Sangat Komplit
 export async function generateMetadata() {
   const siteName = await getSetting("site_name") || "ShortenURL";
   const description = await getSetting("site_description") || "Layanan pemendek URL cepat dan aman.";
@@ -43,6 +42,13 @@ export default async function RootLayout({ children }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        {/* PRECONNECT & GOOGLE FONTS: LEXEND DECA */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
+        
+        {/* BOOTSTRAP 3 CLASSIC CSS */}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
       </head>
       <body style={{ backgroundColor: '#f5f5f5', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
