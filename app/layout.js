@@ -91,6 +91,13 @@ export default async function RootLayout({ children }) {
           src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
           strategy="lazyOnload" 
         />
+          {/* Kode Script Monetag */}
+        <Script
+          src="https://quge5.com/88/tag.min.js"
+          data-zone="237527"
+          data-cfasync="false"
+          strategy="afterInteractive" 
+        />  
       </body>
     </html>
   );
