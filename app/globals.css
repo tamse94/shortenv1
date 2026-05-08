@@ -1,44 +1,50 @@
-/* Pengaturan dasar untuk body */
+/* Font bawaan yang rapi */
 body {
-  background-color: #f5f5f5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
 }
 
-/* * Kelas utilitas pembungkus utama.
- * Memastikan area konten tidak terlalu lebar (maksimal 800px) 
- * dan memiliki jarak (padding) yang cukup dari tepi kiri-kanan layar.
- */
-.trim-box {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 15px; 
+/* Bikin panel kerasa lebih hidup (soft shadow khas web premium) */
+.panel {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+  border: 1px solid #e7e7e7 !important;
+  border-radius: 6px !important;
 }
 
-/* * Kelas custom untuk Card/Box.
- * Menggunakan border-radius standar dan padding yang proporsional 
- * agar elemen di dalamnya tidak terasa sesak.
- */
-.card {
+.panel-heading {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #e7e7e7 !important;
+  border-top-left-radius: 6px !important;
+  border-top-right-radius: 6px !important;
+}
+
+.panel-title {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Percantik kolom input saat diklik */
+.form-control:focus {
+  border-color: #337ab7;
+  box-shadow: 0 0 8px rgba(51, 122, 183, 0.2);
+}
+
+/* Style khusus buat kotak artikel di Dashboard */
+.info-box {
   background-color: #ffffff;
-  border: 1px solid #e3e3e3;
-  border-radius: 4px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  border-radius: 6px;
+  border: 1px solid #e7e7e7;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-top: 15px;
+  margin-bottom: 30px;
 }
 
-/* * Penyesuaian tambahan (opsional) untuk jarak antar form-group 
- * jika Anda merasa bawaan Bootstrap 3 terlalu rapat.
- */
-.form-group {
+.info-title {
+  font-size: 16px;
+  font-weight: 600;
   margin-bottom: 15px;
-}
-
-/* * Memastikan gambar responsif di dalam kontainer apapun
- */
-img {
-  max-width: 100%;
-  height: auto;
+  color: #337ab7;
+  border-bottom: 1px dashed #eee;
+  padding-bottom: 10px;
 }
