@@ -2,8 +2,8 @@ import "./globals.css";
 import { getSetting } from "@/lib/turso";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Script from "next/script"; // Wajib buat SEO (Optimasi Script)
-import { headers } from "next/headers"; // Wajib dipanggil buat baca middleware
+import Script from "next/script"; 
+import { headers } from "next/headers";
 
 export const dynamic = 'force-dynamic';
 
@@ -13,14 +13,14 @@ export async function generateMetadata() {
   const ogImage = await getSetting("og_image") || "";
 
   return {
-    metadataBase: new URL('https://shortenv1.vercel.app'), // Ganti sama domain asli lo nanti
+    metadataBase: new URL('https://shortenv1.vercel.app'), 
     title: {
       default: siteName,
       template: `%s | ${siteName}`,
     },
     description: description,
     alternates: {
-      canonical: '/', // Mencegah Google nganggap ada duplicate content
+      canonical: '/', 
     },
     robots: {
       index: true,
@@ -50,17 +50,19 @@ export async function generateMetadata() {
       title: siteName,
       description: description,
       images: ogImage ? [ogImage] : [],
+    },
+    // 1. SOLUSI VERIFIKASI MONETAG: Wajib di sini biar jadi Meta Tag Permanen
+    other: {
+      "monetag": "040fc680c5a16e17f2d1616e679831de"
     }
   };
 }
 
 export default async function RootLayout({ children }) {
   const siteName = await getSetting("site_name") || "ShortenURL";
-  
-  // 1. Tarik script iklan dari database
   const adsHead = await getSetting("ads_head") || "";
 
-  // 2. Baca URL dari middleware buat ngeblokir iklan di admin
+  // Deteksi Halaman pakai Middleware
   const headerList = headers();
   const pathname = headerList.get('x-pathname') || "";
   const isAdminPage = pathname.startsWith("/dasbord") || pathname.startsWith("/list") || pathname.startsWith("/seting");
@@ -68,20 +70,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Next.js otomatis handle meta charset & viewport. Jangan ditulis manual. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
-        
-        {/* Verifikasi Domain Monetag */}
-        <meta name="monetag" content="040fc680c5a16e17f2d1616e679831de" />
-
-        {/* 3. SLOT ADS HEAD: Cuma muncul di <head> BUKAN halaman admin */}
-        {!isAdminPage && adsHead && (
-          <script dangerouslySetInnerHTML={{ __html: adsHead }} />
-        )}
-
-        {/* CSS ditaruh di head aman karena gak nge-block render sebanyak JS */}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
       </head>
       <body style={{ backgroundColor: '#f5f5f5', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -96,18 +87,29 @@ export default async function RootLayout({ children }) {
 
         <Footer siteName={siteName} />
 
-        {/* SEO HACK: Pakai next/script dengan strategy="lazyOnload".
-          Ini bikin jQuery & Bootstrap dimuat BELAKANGAN setelah konten utama muncul.
-          Web lo bakal kebuka instan tanpa nunggu script berat ini kelar di-download. 
-        */}
-        <Script 
-          src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" 
-          strategy="lazyOnload" 
-        />
-        <Script 
-          src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-          strategy="lazyOnload" 
-        />
+        <Script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" strategy="lazyOnload" />
+        <Script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" strategy="lazyOnload" />
+
+        {/* 2. SOLUSI IKLAN GAK MUNCUL: Trik Injector Javascript */}
+        {/* Trik ini memaksa tag <script> dari database untuk tereksekusi dan ditaruh di <head> */}
+        {!isAdminPage && adsHead && (
+          <Script id="ads-injector" strategy="afterInteractive" dangerouslySetInnerHTML={{
+            __html: `
+              var temp = document.createElement('div');
+              temp.innerHTML = \`${adsHead.replace(/`/g, '\\`').replace(/<\//g, '<\\/')}\`;
+              var scripts = temp.getElementsByTagName('script');
+              for (var i = 0; i < scripts.length; i++) {
+                var s = document.createElement('script');
+                for (var j = 0; j < scripts[i].attributes.length; j++) {
+                  s.setAttribute(scripts[i].attributes[j].name, scripts[i].attributes[j].value);
+                }
+                s.innerHTML = scripts[i].innerHTML;
+                document.head.appendChild(s);
+              }
+            `
+          }} />
+        )}
+
       </body>
     </html>
   );
