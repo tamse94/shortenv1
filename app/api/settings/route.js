@@ -1,20 +1,31 @@
 import { turso } from "@/lib/turso";
 import { NextResponse } from "next/server";
 
+// Fungsi untuk MENGAMBIL data saat halaman seting dibuka
+export async function GET() {
+  try {
+    const res = await turso.execute("SELECT key, value FROM settings");
+    const settings = {};
+    res.rows.forEach(row => {
+      settings[row.key] = row.value;
+    });
+    return NextResponse.json(settings);
+  } catch (error) {
+    return NextResponse.json({});
+  }
+}
+
+// Fungsi untuk MENYIMPAN data saat tombol diklik
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const data = await req.json();
     
-    // Looping data untuk dimasukkan ke tabel settings
-    for (const [key, value] of Object.entries(body)) {
-      if (value) {
-        await turso.execute({
-          // Menggunakan UPSERT (Jika key sudah ada, update value-nya)
-          sql: `INSERT INTO settings (key, value) VALUES (?, ?) 
-                ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
-          args: [key, value]
-        });
-      }
+    // Looping untuk nyimpen semua data ke tabel settings
+    for (const [key, value] of Object.entries(data)) {
+      await turso.execute({
+        sql: "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        args: [key, value]
+      });
     }
     
     return NextResponse.json({ success: true });
