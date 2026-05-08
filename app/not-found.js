@@ -1,9 +1,13 @@
-import Link from "next/link";
-
 export default function NotFound() {
   return (
     <div className="row">
-      <div className="col-md-8 col-md-offset-2 text-center" style={{ padding: '60px 20px' }}>
+      {/* TRIK AJAIB: Sembunyikan Navbar & Footer bawaan layout khusus di halaman ini */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        nav.navbar, footer { display: none !important; }
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+      `}} />
+
+      <div className="col-md-12 text-center" style={{ padding: '20px' }}>
         
         {/* SVG ILLUSTRATION: Broken Link / 404 */}
         <div style={{ marginBottom: '25px' }}>
@@ -44,11 +48,11 @@ export default function NotFound() {
           The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
         </p>
 
-        {/* TOMBOL KEMBALI */}
-        <Link href="/" className="btn btn-primary btn-lg" style={{ padding: '12px 30px', borderRadius: '40px', fontWeight: '600', letterSpacing: '0.5px' }}>
+        {/* TOMBOL KEMBALI PAKAI TAG <a> BIASA BIAR REFRESH TOTAL */}
+        <a href="/" className="btn btn-primary btn-lg" style={{ padding: '12px 30px', borderRadius: '40px', fontWeight: '600', letterSpacing: '0.5px' }}>
           <span className="glyphicon glyphicon-home" style={{ marginRight: '8px' }}></span> 
           Back to Homepage
-        </Link>
+        </a>
         
       </div>
     </div>
