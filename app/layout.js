@@ -93,11 +93,12 @@ export default async function RootLayout({ children }) {
         />
           {/* Kode Script Monetag */}
         <Script
-          src="https://quge5.com/88/tag.min.js"
-          data-zone="237527"
-          data-cfasync="false"
-          strategy="afterInteractive" 
-        />  
+  src="https://quge5.com/88/tag.min.js"
+  data-zone="237527"
+  data-cfasync="false"
+  strategy="beforeInteractive" 
+/>
+
       </body>
     </html>
   );
