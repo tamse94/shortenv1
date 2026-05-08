@@ -61,9 +61,6 @@ export default async function RedirectPage({ params }) {
   // 7. Kalau Mode V2, Tampilkan Landing Page HTML Lo
   return (
     <>
-    {sys.ads_head && (
-  <head dangerouslySetInnerHTML={{ __html: sys.ads_head }} />
-)}
       {/* TRIK AJAIB: Matikan Navbar & Footer bawaan dari layout.js khusus di halaman ini */}
       <style dangerouslySetInnerHTML={{ __html: `
         nav.navbar.navbar-default, footer:not(.footer-custom) { display: none !important; }
