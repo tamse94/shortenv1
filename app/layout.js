@@ -65,7 +65,8 @@ export default async function RootLayout({ children }) {
   // Cek apakah halaman saat ini adalah area admin
   const isAdminPage = pathname.startsWith("/dasbord") || 
                       pathname.startsWith("/list") || 
-                      pathname.startsWith("/seting");
+                      pathname.startsWith("/seting") ||
+                      pathname.startsWith("/login");
 
   return (
     <html lang="en">
