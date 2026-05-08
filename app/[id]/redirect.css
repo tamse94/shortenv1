@@ -1,97 +1,432 @@
-/* Matikan navbar bawaan dari layout utama khusus di halaman ini */
-.navbar { 
-  display: none !important; 
-}
 
-/* Reset background bawaan */
+/* Reset & Base */
 body {
-  background-color: #f4f6f8 !important;
+    background-color: #f5f7fa;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #4a4a4a;
+    margin: 0;
+    padding: 0;
 }
 
-/* Area pembungkus utama biar tepat di tengah layar */
-.redirect-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 15px;
+/* Navbar */
+.navbar-custom {
+    background-color: #184c9c;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0; 
+}
+.navbar-brand-custom {
+    color: #ffffff;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+.navbar-brand-custom:hover, .navbar-brand-custom:focus {
+    color: #ffffff;
+    text-decoration: none;
+}
+.btn-payout {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+.btn-payout:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
-/* Desain kotak (card) yang pas, tidak terlalu lebar */
+/* Main Layout Wrappers */
+.main-container {
+    width: 100%;
+    margin: 0 auto;
+}
+.card-wrapper {
+    width: 100%;
+    margin: 0 auto;
+}
+.info-wrapper {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Redirect Card */
 .redirect-card {
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  max-width: 450px; /* Ukuran maksimal biar gak kelebaran di PC */
-  width: 100%;
-  text-align: center;
+    background-color: #ffffff;
+    border-top: 4px solid #184c9c;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; 
+}
+.area-image-container {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    border-radius: 4px;
+    margin: 0 auto;
+    padding: 5px;
+}
+.area-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.title-page {
+    font-weight: bold;
+    color: #333333;
+    margin: 0;
+}
+.separator {
+    border: 0;
+    border-top: 1px solid #eeeeee;
+}
+.skip-title {
+    font-weight: bold;
+    color: #4a4a4a;
+    margin: 0;
+}
+.text-fallback {
+    color: #777777;
+    line-height: 1.5;
+}
+.text-fallback a {
+    color: #3b7bbd;
+    text-decoration: underline;
+    font-weight: bold;
+}
+.btn-continue {
+    background-color: #184c9c;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+.btn-continue:hover {
+    background-color: #123977;
+    color: #ffffff;
 }
 
-.redirect-image {
-  width: 100%;
-  max-height: 250px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 15px;
+/* Info Section */
+.info-section {
+    background-color: transparent;
+}
+.info-section h3 {
+    font-weight: bold;
+    color: #333333;
+}
+.info-section p {
+    color: #555555;
+    line-height: 1.6;
+}
+.info-section a {
+    color: #184c9c;
+    font-weight: bold;
 }
 
-.redirect-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 10px;
-  line-height: 1.4;
+/* Footer */
+.footer-custom {
+    background-color: #184c9c;
+    color: #ffffff;
+    text-align: center;
+    position: relative;
+    width: 100%;
+}
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-block;
+}
+.footer-links a:hover {
+    text-decoration: underline;
+}
+.footer-copyright {
+    color: #c9d8f0;
+    margin: 0;
+}
+.btn-scroll-top {
+    position: absolute;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Animasi loading muter-muter */
-.spinner {
-  margin: 15px auto;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #337ab7;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  animation: spin 1s linear infinite;
+/* =========================================
+   MEDIA QUERIES KOMPLIT (Mobile, Tablet, Desktop)
+   ========================================= */
+
+/* Mobile (Maks 767px) */
+@media (max-width: 767px) {
+    .navbar-custom { padding: 10px 15px; }
+    .navbar-brand-custom { font-size: 20px; }
+    .navbar-brand-custom i { font-size: 24px; margin-right: 5px; }
+    .btn-payout { font-size: 11px; padding: 5px 10px; float: right; margin-top: 2px; }
+    
+    .main-container { padding: 25px 10px; } /* Jarak aman tepi layar */
+    .card-wrapper { max-width: 100%; }
+    
+    .redirect-card { padding: 20px 15px; margin-bottom: 25px; }
+    .area-image-container { max-width: 280px; margin-bottom: 15px; }
+    .title-page { font-size: 18px; margin-bottom: 0; }
+    .separator { margin: 15px 0; }
+    .skip-title { font-size: 16px; margin-bottom: 10px; }
+    .text-fallback { font-size: 12px; margin-bottom: 15px; }
+    .btn-continue { font-size: 14px; padding: 12px; max-width: 100%; }
+    
+    .info-wrapper { max-width: 100%; padding: 0 10px 30px 10px; }
+    .info-section h3 { font-size: 16px; margin-top: 15px; margin-bottom: 8px; }
+    .info-section p { font-size: 13px; margin-bottom: 10px; }
+    
+    .footer-custom { padding: 20px 0; }
+    .footer-links { margin-bottom: 8px; }
+    .footer-links a { font-size: 11px; margin: 0 6px; }
+    .footer-copyright { font-size: 10px; }
+    .btn-scroll-top { top: -15px; right: 15px; width: 32px; height: 32px; }
+    .btn-scroll-top i { font-size: 16px; }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .navbar-custom { padding: 15px 30px; }
+    .navbar-brand-custom { font-size: 22px; }
+    .navbar-brand-custom i { font-size: 26px; margin-right: 8px; }
+    .btn-payout { font-size: 12px; padding: 6px 12px; float: right; margin-top: 2px; }
+    
+    .main-container { padding: 40px 20px; }
+    .card-wrapper { max-width: 550px; } /* Lebar fix agar tidak kepanjangan */
+    
+    .redirect-card { padding: 30px 25px; margin-bottom: 35px; }
+    .area-image-container { max-width: 320px; margin-bottom: 20px; }
+    .title-page { font-size: 20px; margin-bottom: 0; }
+    .separator { margin: 20px 0; }
+    .skip-title { font-size: 18px; margin-bottom: 15px; }
+    .text-fallback { font-size: 13px; margin-bottom: 20px; }
+    .btn-continue { font-size: 15px; padding: 12px 20px; max-width: 300px; }
+    
+    .info-wrapper { max-width: 700px; padding: 0 20px 40px 20px; }
+    .info-section h3 { font-size: 18px; margin-top: 20px; margin-bottom: 10px; }
+    .info-section p { font-size: 14px; margin-bottom: 15px; }
+    
+    .footer-custom { padding: 25px 0; }
+    .footer-links { margin-bottom: 10px; }
+    .footer-links a { font-size: 12px; margin: 0 10px; }
+    .footer-copyright { font-size: 11px; }
+    .btn-scroll-top { top: -18px; right: 25px; width: 36px; height: 36px; }
+    .btn-scroll-top i { font-size: 18px; }
+}
+
+/* Desktop (992px ke atas) */
+@media (min-width: 992px) {
+    .navbar-custom { padding: 15px 50px; }
+    .navbar-brand-custom { font-size: 24px; }
+    .navbar-brand-custom i { font-size: 28px; margin-right: 10px; }
+    .btn-payout { font-size: 13px; padding: 8px 15px; float: right; margin-top: 2px; }
+    
+    .main-container { padding: 50px 0; }
+    .card-wrapper { max-width: 600px; } /* Lebar sangat ideal untuk layar besar */
+    
+    .redirect-card { padding: 40px 35px; margin-bottom: 40px; }
+    .area-image-container { max-width: 350px; margin-bottom: 25px; }
+    .title-page { font-size: 22px; margin-bottom: 0; }
+    .separator { margin: 25px 0; }
+    .skip-title { font-size: 20px; margin-bottom: 15px; }
+    .text-fallback { font-size: 14px; margin-bottom: 25px; }
+    .btn-continue { font-size: 16px; padding: 14px 20px; max-width: 320px; }
+    
+    .info-wrapper { max-width: 800px; padding: 0 0 50px 0; }
+    .info-section h3 { font-size: 20px; margin-top: 25px; margin-bottom: 12px; }
+    .info-section p { font-size: 15px; margin-bottom: 15px; }
+    
+    .footer-custom { padding: 30px 0; }
+    .footer-links { margin-bottom: 12px; }
+    .footer-links a { font-size: 13px; margin: 0 12px; }
+    .footer-copyright { font-size: 12px; }
+    .btn-scroll-top { top: -20px; right: 40px; width: 40px; height: 40px; }
+    .btn-scroll-top i { font-size: 20px; }
+}
+
+/* Tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .navbar-custom { padding: 15px 30px; }
+    .navbar-brand-custom { font-size: 22px; }
+    .navbar-brand-custom i { font-size: 26px; margin-right: 8px; }
+    .btn-payout { font-size: 12px; padding: 6px 12px; float: right; margin-top: 2px; }
+    
+    .main-container { padding: 40px 20px; }
+    
+    /* Lebar card dan info disamain biar sejajar */
+    .card-wrapper { max-width: 700px; } 
+    .info-wrapper { max-width: 700px; padding: 0 0 40px 0; }
+    
+    .redirect-card { padding: 40px 30px; margin-bottom: 35px; }
+    
+    /* Image dan tombol dilebarin */
+    .area-image-container { max-width: 80%; margin-bottom: 25px; }
+    .title-page { font-size: 22px; margin-bottom: 0; }
+    .separator { margin: 25px 0; }
+    .skip-title { font-size: 18px; margin-bottom: 15px; }
+    .text-fallback { font-size: 14px; margin-bottom: 25px; }
+    .btn-continue { font-size: 16px; padding: 14px 20px; max-width: 400px; }
+    
+    .info-section h3 { font-size: 18px; margin-top: 20px; margin-bottom: 10px; }
+    .info-section p { font-size: 14px; margin-bottom: 15px; }
+    
+    .footer-custom { padding: 25px 0; }
+    .footer-links { margin-bottom: 10px; }
+    .footer-links a { font-size: 12px; margin: 0 10px; }
+    .footer-copyright { font-size: 11px; }
+    .btn-scroll-top { top: -18px; right: 25px; width: 36px; height: 36px; }
+    .btn-scroll-top i { font-size: 18px; }
+}
+
+/* Desktop (992px ke atas) */
+@media (min-width: 992px) {
+    .navbar-custom { padding: 15px 50px; }
+    .navbar-brand-custom { font-size: 24px; }
+    .navbar-brand-custom i { font-size: 28px; margin-right: 10px; }
+    .btn-payout { font-size: 13px; padding: 8px 15px; float: right; margin-top: 2px; }
+    
+    .main-container { padding: 50px 0; }
+    
+    /* Lebar card dan info dibikin sejajar presisi 100% */
+    .card-wrapper { max-width: 800px; } 
+    .info-wrapper { max-width: 800px; padding: 0 0 50px 0; }
+    
+    .redirect-card { padding: 50px 40px; margin-bottom: 40px; }
+    
+    /* Image dan tombol dimaksimalkan lebarnya */
+    .area-image-container { max-width: 85%; margin-bottom: 30px; }
+    .title-page { font-size: 24px; margin-bottom: 0; }
+    .separator { margin: 30px 0; }
+    .skip-title { font-size: 20px; margin-bottom: 15px; }
+    .text-fallback { font-size: 15px; margin-bottom: 30px; }
+    .btn-continue { font-size: 16px; padding: 15px 20px; max-width: 450px; }
+    
+    .info-section h3 { font-size: 20px; margin-top: 25px; margin-bottom: 12px; }
+    .info-section p { font-size: 15px; margin-bottom: 15px; }
+    
+    .footer-custom { padding: 30px 0; }
+    .footer-links { margin-bottom: 12px; }
+    .footer-links a { font-size: 13px; margin: 0 12px; }
+    .footer-copyright { font-size: 12px; }
+    .btn-scroll-top { top: -20px; right: 40px; width: 40px; height: 40px; }
+    .btn-scroll-top i { font-size: 20px; }
+}
+/* Timer Lingkaran */
+.timer-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid #184c9c;
+    background-color: #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px auto;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Area Iklan Dasar */
+.ad-slot-box {
+    background-color: #f9f9f9;
+    border: 1px dashed #cccccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px auto;
+    color: #aaaaaa;
+    font-size: 12px;
+}
+
+/* Tombol Get Link Final */
+.btn-get-link {
+    background-color: #28a745;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+.btn-get-link:hover {
+    background-color: #218838;
+    color: #ffffff;
+}
+
+/* Ukuran Iklan Responsive Media Query */
+@media (max-width: 767px) {
+    .ad-slot-box {
+        width: 300px;
+        height: 250px; /* Ukuran standar iklan mobile */
+    }
+    .btn-get-link { max-width: 100%; }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .ad-slot-box {
+        width: 468px;
+        height: 60px; /* Ukuran standar iklan tablet */
+    }
+    .btn-get-link { max-width: 300px; }
+}
+@media (min-width: 992px) {
+    .ad-slot-box {
+        width: 728px;
+        height: 90px; /* Ukuran standar iklan desktop leaderboard */
+    }
+    .btn-get-link { max-width: 400px; padding: 15px 20px; }
+}
+/* Update Area Image (Tanpa box, langsung border di gambar) */
+.area-image-container {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+.area-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border: 2px solid #d1d8e0;
+    border-radius: 4px;
 }
 
 
-/* ... CSS yang kemarin tetap ada, tambahin ini di bawahnya ... */
 
-.btn-getlink {
-  display: inline-block;
-  background-color: #007bff;
-  color: white !important;
-  padding: 12px 25px;
-  text-decoration: none !important;
-  font-weight: bold;
-  border-radius: 50px;
-  font-size: 16px;
-  transition: 0.3s;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+/* Update Button Get Link (Lebih elegan, gradient & shadow) */
+.btn-get-link {
+    background-color: #28a745;
+    background-image: linear-gradient(to bottom, #2ebd4e, #218838);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 15px 20px;
+    border: 1px solid #1e7e34;
+    border-radius: 4px;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease-in-out;
+    margin-top: 15px;
 }
-
-.btn-getlink:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
-
-.spinner {
-  margin: 20px auto;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.btn-get-link:hover {
+    background-image: linear-gradient(to bottom, #218838, #1e7e34);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    transform: translateY(1px);
 }
