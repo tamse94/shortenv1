@@ -9,7 +9,14 @@ export default function Navbar({ siteName }) {
   const isActive = (path) => pathname === path ? "active" : "";
 
   return (
-    <nav className="navbar navbar-default navbar-static-top" style={{ borderBottom: '2px solid #e7e7e7', marginBottom: '30px', backgroundColor: '#ffffff' }}>
+    <nav className="navbar navbar-default" style={{ 
+      position: 'sticky', // Ini yang bikin navbar mengapung/mengikuti scroll
+      top: 0,             // Nempel tepat di atas layar
+      zIndex: 1030,       // Biar posisinya selalu di paling depan (gak ketimpa konten lain)
+      borderBottom: '2px solid #e7e7e7', 
+      marginBottom: '30px', 
+      backgroundColor: '#ffffff' 
+    }}>
       <div className="container">
         <div className="navbar-header">
           {/* Tombol Menu buat tampilan HP */}
