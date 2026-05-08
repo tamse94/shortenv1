@@ -3,6 +3,7 @@ import { getSetting } from "@/lib/turso";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Script from "next/script"; // Wajib buat SEO (Optimasi Script)
+import { headers } from "next/headers"; // Wajib dipanggil buat baca middleware
 
 export const dynamic = 'force-dynamic';
 
@@ -55,23 +56,33 @@ export async function generateMetadata() {
 
 export default async function RootLayout({ children }) {
   const siteName = await getSetting("site_name") || "ShortenURL";
+  
+  // 1. Tarik script iklan dari database
+  const adsHead = await getSetting("ads_head") || "";
+
+  // 2. Baca URL dari middleware buat ngeblokir iklan di admin
+  const headerList = headers();
+  const pathname = headerList.get('x-pathname') || "";
+  const isAdminPage = pathname.startsWith("/dasbord") || pathname.startsWith("/list") || pathname.startsWith("/seting");
 
   return (
-    <html lang="id">
+    <html lang="en">
       <head>
         {/* Next.js otomatis handle meta charset & viewport. Jangan ditulis manual. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
+        
+        {/* Verifikasi Domain Monetag */}
         <meta name="monetag" content="040fc680c5a16e17f2d1616e679831de" />
+
+        {/* 3. SLOT ADS HEAD: Cuma muncul di <head> BUKAN halaman admin */}
+        {!isAdminPage && adsHead && (
+          <script dangerouslySetInnerHTML={{ __html: adsHead }} />
+        )}
+
         {/* CSS ditaruh di head aman karena gak nge-block render sebanyak JS */}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<script 
-          src="https://quge5.com/88/tag.min.js" 
-          data-zone="237527" 
-          async 
-          data-cfasync="false"
-        ></script>
       </head>
       <body style={{ backgroundColor: '#f5f5f5', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         
