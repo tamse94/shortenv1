@@ -221,7 +221,7 @@ export default function Settings() {
           </div>
 
           <button className="btn btn-primary btn-block btn-lg" style={{ marginBottom: '40px' }} disabled={uploading}>
-            {uploading ? "Menyimpan Data & Mengunggah Gambar..." : "Simpan Semua Pengaturan"}
+            {uploading ? "Menyimpan Data.." : "Simpan Semua Pengaturan"}
           </button>
         </form>
       </div>
