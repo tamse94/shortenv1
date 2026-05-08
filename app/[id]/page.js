@@ -1,52 +1,52 @@
 import { turso } from "@/lib/turso";
-import { decodeUrl } from "@/lib/encoder";
-import { notFound, redirect } from "next/navigation";
+import { decodeId } from "@/lib/encoder";
+import { redirect } from "next/navigation";
 
-// Fungsi untuk Meta Tag Dinamis (Sangat Penting untuk Share Link)
-export async function generateMetadata({ params }) {
-  const res = await turso.execute({
-    sql: "SELECT * FROM urls WHERE id = ?",
-    args: [params.id]
-  });
-
-  const data = res.rows[0];
-  if (!data) return { title: "Not Found" };
-
-  return {
-    title: data.title || "Redirecting...",
-    description: data.description || "Silahkan tunggu, Anda akan dialihkan.",
-    openGraph: {
-      title: data.title,
-      description: data.description,
-      images: [data.image_url],
-    },
-  };
-}
+// Perintah agar Vercel tidak mengecek database saat proses build (penting!)
+export const dynamic = 'force-dynamic';
 
 export default async function RedirectPage({ params }) {
-  const res = await turso.execute({
-    sql: "SELECT * FROM urls WHERE id = ?",
-    args: [params.id]
-  });
+  const { id } = params;
 
-  const data = res.rows[0];
-  if (!data) notFound();
+  try {
+    // 1. Dekode ID dari URL (Misal: 'abc' jadi 1)
+    const originalId = decodeId(id);
 
-  // Update Hit Count
-  await turso.execute({
-    sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?",
-    args: [params.id]
-  });
+    // 2. Ambil data URL target dari Turso
+    const res = await turso.execute({
+      sql: "SELECT target_url, mode FROM urls WHERE id = ?",
+      args: [originalId],
+    });
 
-  const target = decodeUrl(data.target_url);
+    const data = res.rows[0];
 
+    // 3. Jika ID tidak ditemukan di database, lempar ke halaman 404 atau Home
+    if (!data) {
+      redirect("/");
+    }
+
+    // 4. Update jumlah klik (Hit Count) secara background
+    // Kita tidak pakai 'await' di sini supaya user langsung pindah tanpa nunggu update selesai
+    turso.execute({
+      sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?",
+      args: [originalId],
+    });
+
+    // 5. Eksekusi Redirect berdasarkan mode (v1 atau v2)
+    // Untuk saat ini kita buat redirect langsung dulu
+    if (data.target_url) {
+      redirect(data.target_url);
+    }
+
+  } catch (error) {
+    console.error("Redirect Error:", error);
+    redirect("/");
+  }
+
+  // Fallback jika terjadi sesuatu yang tidak diinginkan
   return (
-    <div className="text-center" style={{ marginTop: '100px' }}>
-      <h3>Redirecting to: {data.title || "Link"}</h3>
-      <p>Mohon tunggu sebentar...</p>
-      <script dangerouslySetInnerHTML={{
-        __html: `setTimeout(() => { window.location.href = "${target}"; }, 2000);`
-      }} />
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <p>Redirecting...</p>
     </div>
   );
 }
