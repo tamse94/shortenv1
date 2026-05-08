@@ -10,7 +10,6 @@ export default function Dashboard() {
   const [mode, setMode] = useState("v1");
   const [preview, setPreview] = useState(null);
 
-  // Fungsi untuk handle upload gambar ke Cloudinary lewat API kita
   const handleFileUpload = async (file) => {
     if (!file) return null;
     setUploading(true);
@@ -25,7 +24,7 @@ export default function Dashboard() {
       const data = await res.json();
       if (data.success) {
         setUploading(false);
-        return data.url; // Ini URL secure_url dari Cloudinary
+        return data.url; 
       } else {
         throw new Error(data.error);
       }
@@ -48,14 +47,13 @@ export default function Dashboard() {
 
     let finalImageUrl = "";
     
-    // Jika Mode V2, upload gambarnya dulu
     if (mode === "v2") {
       const fileInput = form.image_file.files[0];
       if (fileInput) {
         finalImageUrl = await handleFileUpload(fileInput);
         if (!finalImageUrl) {
           setLoading(false);
-          return; // Stop kalau upload gagal
+          return;
         }
       }
     }
@@ -93,15 +91,17 @@ export default function Dashboard() {
   return (
     <div className="row">
       <div className="col-md-8 col-md-offset-2">
-        <div className="panel panel-default" style={{ marginTop: '20px' }}>
+        
+        {/* PANEL UTAMA: Form Generator */}
+        <div className="panel panel-default" style={{ marginTop: '10px' }}>
           <div className="panel-heading">
-            <h3 className="panel-title">Buat Short URL</h3>
+            <h3 className="panel-title"><span className="glyphicon glyphicon-link" style={{ marginRight: '8px' }}></span>Buat Short URL</h3>
           </div>
           <div className="panel-body">
             
             <ul className="nav nav-pills" style={{ marginBottom: '20px' }}>
               <li className={mode === "v1" ? "active" : ""}><a href="#" onClick={(e) => { e.preventDefault(); setMode("v1"); setShortUrl(""); }}>V1 (Langsung)</a></li>
-              <li className={mode === "v2" ? "active" : ""}><a href="#" onClick={(e) => { e.preventDefault(); setMode("v2"); setShortUrl(""); }}>V2 (Meta Image)</a></li>
+              <li className={mode === "v2" ? "active" : ""}><a href="#" onClick={(e) => { e.preventDefault(); setMode("v2"); setShortUrl(""); }}>V2 (Meta Image & Ads)</a></li>
             </ul>
 
             {msg.text && <div className={`alert alert-${msg.type}`}>{msg.text}</div>}
@@ -109,46 +109,49 @@ export default function Dashboard() {
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>URL Tujuan</label>
-                <input type="url" name="target_url" className="form-control" placeholder="https://..." required />
+                <input type="url" name="target_url" className="form-control input-lg" placeholder="https://link-panjang.com/..." required />
               </div>
 
               {mode === "v2" && (
                 <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '5px', border: '1px solid #ddd', marginBottom: '15px' }}>
                   <div className="form-group">
-                    <label>Judul Meta</label>
-                    <input type="text" name="title" className="form-control" placeholder="Judul share..." required />
+                    <label>Judul Meta (Title)</label>
+                    <input type="text" name="title" className="form-control" placeholder="Tulis judul menarik untuk sosmed..." required />
                   </div>
                   <div className="form-group">
                     <label>Deskripsi Meta</label>
-                    <textarea name="description" className="form-control" rows="2" placeholder="Deskripsi..." required></textarea>
+                    <textarea name="description" className="form-control" rows="2" placeholder="Tulis deskripsi singkat..." required></textarea>
                   </div>
                   <div className="form-group">
-                    <label>Upload Gambar (Thumbnail)</label>
+                    <label>Upload Thumbnail</label>
                     <input type="file" name="image_file" className="form-control" accept="image/*" required onChange={(e) => {
                       if (e.target.files[0]) setPreview(URL.createObjectURL(e.target.files[0]));
                     }} />
-                    {preview && <img src={preview} style={{ width: '100px', marginTop: '10px', borderRadius: '4px' }} />}
-                    {uploading && <p className="text-info"><small>Sedang mengunggah ke Cloudinary...</small></p>}
+                    {preview && <img src={preview} style={{ width: '120px', marginTop: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />}
+                    {uploading && <p className="text-info" style={{ marginTop: '5px' }}><small><span className="glyphicon glyphicon-refresh" style={{ animation: 'spin 2s linear infinite' }}></span> Sedang mengunggah ke server...</small></p>}
                   </div>
                 </div>
               )}
 
-              <button type="submit" className="btn btn-primary btn-block" disabled={loading || uploading}>
-                {loading ? "Memproses..." : uploading ? "Sedang Upload Gambar..." : "Buat Link"}
+              <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={loading || uploading}>
+                {loading ? "Memproses..." : uploading ? "Menyimpan Gambar..." : "Buat Tautan Sekarang"}
               </button>
             </form>
 
             {shortUrl && (
-              <div style={{ marginTop: '25px', padding: '15px', backgroundColor: '#eefbfa', border: '1px dashed #008080' }}>
-                <label>Hasil URL:</label>
+              <div style={{ marginTop: '25px', padding: '15px', backgroundColor: '#eefbfa', border: '1px dashed #008080', borderRadius: '4px' }}>
+                <label>Hasil URL Anda:</label>
                 <div className="input-group">
-                  <input type="text" className="form-control" value={shortUrl} readOnly />
+                  <input type="text" className="form-control input-lg" value={shortUrl} readOnly style={{ backgroundColor: '#fff' }} />
                   <span className="input-group-btn">
-                    <button className="btn btn-success" type="button" onClick={() => {
+                    <button className="btn btn-success btn-lg" type="button" onClick={() => {
                       navigator.clipboard.writeText(shortUrl);
                       setCopyStatus("Tersalin!");
                       setTimeout(() => setCopyStatus("Copy Link"), 2000);
-                    }}>{copyStatus}</button>
+                    }}>
+                      <span className="glyphicon glyphicon-copy" style={{ marginRight: '5px' }}></span>
+                      {copyStatus}
+                    </button>
                   </span>
                 </div>
               </div>
@@ -156,6 +159,31 @@ export default function Dashboard() {
 
           </div>
         </div>
+
+        {/* AREA ARTIKEL PENJELASAN */}
+        <div className="info-box">
+          <div className="row">
+            <div className="col-md-6">
+              <h4 className="info-title">
+                <span className="glyphicon glyphicon-flash" style={{ color: '#f39c12', marginRight: '8px' }}></span>
+                Mode V1 (Direct Redirect)
+              </h4>
+              <p className="text-muted" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                Mode ini berfungsi untuk mengalihkan pengunjung secara instan ke link tujuan tanpa jeda atau halaman perantara. Sangat cocok untuk memendekkan URL biasa dengan proses yang sangat cepat dan tanpa hambatan.
+              </p>
+            </div>
+            <div className="col-md-6">
+              <h4 className="info-title">
+                <span className="glyphicon glyphicon-picture" style={{ color: '#00c0ef', marginRight: '8px' }}></span>
+                Mode V2 (Meta & Ads)
+              </h4>
+              <p className="text-muted" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                Mode ini menampilkan kartu perantara (Safelink) yang dilengkapi dengan gambar thumbnail, judul kustom, dan dukungan script iklan. Sangat optimal untuk dibagikan di sosial media (Facebook, WhatsApp) guna meningkatkan pendapatan iklan.
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
