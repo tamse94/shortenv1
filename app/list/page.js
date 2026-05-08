@@ -72,189 +72,183 @@ export default function ListURL() {
   };
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        
-        <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#337ab7', fontWeight: 'bold' }}>
-          <span className="glyphicon glyphicon-th-list"></span> Manajemen URL
-        </h3>
-
-        {/* AREA STATISTIK - BOOTSTRAP MURNI TENGAH */}
-        <div className="row">
-          <div className="col-md-4 col-sm-4 col-xs-12">
-            <div className="panel panel-info text-center">
-              <div className="panel-body" style={{ padding: '20px' }}>
-                <span className="glyphicon glyphicon-link" style={{ fontSize: '30px', color: '#31708f' }}></span>
-                <h2 style={{ margin: '10px 0', fontWeight: 'bold', color: '#31708f' }}>{stats.totalLinks}</h2>
-                <p className="text-muted" style={{ margin: 0, fontWeight: 'bold' }}>TOTAL TAUTAN</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-4 col-sm-4 col-xs-12">
-            <div className="panel panel-success text-center">
-              <div className="panel-body" style={{ padding: '20px' }}>
-                <span className="glyphicon glyphicon-hand-up" style={{ fontSize: '30px', color: '#3c763d' }}></span>
-                <h2 style={{ margin: '10px 0', fontWeight: 'bold', color: '#3c763d' }}>{stats.totalClicks}</h2>
-                <p className="text-muted" style={{ margin: 0, fontWeight: 'bold' }}>TOTAL PENGUNJUNG</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-4 col-sm-4 col-xs-12">
-            <div className="panel panel-warning text-center">
-              <div className="panel-body" style={{ padding: '20px' }}>
-                <span className="glyphicon glyphicon-picture" style={{ fontSize: '30px', color: '#8a6d3b' }}></span>
-                <h2 style={{ margin: '10px 0', fontWeight: 'bold', color: '#8a6d3b' }}>{stats.totalImages}</h2>
-                <p className="text-muted" style={{ margin: 0, fontWeight: 'bold' }}>TOTAL GAMBAR</p>
-              </div>
-            </div>
-          </div>
+    <div>
+      <div className="row">
+        <div className="col-md-12">
+          <h3 className="page-header" style={{ marginTop: 0 }}>
+            <span className="glyphicon glyphicon-th-list"></span> Manajemen URL
+          </h3>
         </div>
-
-        {/* NOTIFIKASI */}
-        {msg.text && (
-          <div className={`alert alert-${msg.type}`} style={{ padding: '10px' }}>
-            <strong>Info:</strong> {msg.text}
-          </div>
-        )}
-
-        {/* TABEL RESPONSIVE MURNI BOOTSTRAP 3 */}
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title">Daftar Link Aktif</h3>
-          </div>
-          
-          {/* Class table-responsive ini HANYA membungkus tabel, diletakkan DI LUAR panel-body */}
-          <div className="table-responsive">
-            <table className="table table-striped table-hover table-bordered" style={{ margin: 0, whiteSpace: 'nowrap' }}>
-              <thead>
-                <tr className="active">
-                  <th>ID URL</th>
-                  <th>Judul Meta</th>
-                  <th>URL Tujuan</th>
-                  <th className="text-center">Mode</th>
-                  <th className="text-center">Klik</th>
-                  <th>Tgl Dibuat</th>
-                  <th className="text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan="7" className="text-center" style={{ padding: '40px' }}><div className="spinner" style={{ margin:'auto' }}></div></td></tr>
-                ) : urls.length === 0 ? (
-                  <tr><td colSpan="7" className="text-center" style={{ padding: '30px', color: '#777' }}>Belum ada data tautan.</td></tr>
-                ) : (
-                  urls.map((u) => {
-                    const decodedUrl = decodeUrlSafe(u.target_url);
-                    return (
-                      <tr key={u.id}>
-                        <td style={{ verticalAlign: 'middle' }}>
-                          <a href={`/${u.id}`} target="_blank" style={{ fontWeight: 'bold' }}>/{u.id}</a>
-                        </td>
-                        
-                        <td style={{ verticalAlign: 'middle' }}>
-                          <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }} title={u.title || "Tanpa Judul"}>
-                            {u.title || "-"}
-                          </div>
-                        </td>
-
-                        <td style={{ verticalAlign: 'middle' }}>
-                          <div style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }} title={decodedUrl}>
-                            <a href={decodedUrl} target="_blank" className="text-muted">{decodedUrl}</a>
-                          </div>
-                        </td>
-                        
-                        <td className="text-center" style={{ verticalAlign: 'middle' }}>
-                          <span className={`label ${u.mode === 'v1' ? 'label-primary' : 'label-success'}`}>
-                            {u.mode.toUpperCase()}
-                          </span>
-                        </td>
-                        
-                        <td className="text-center" style={{ verticalAlign: 'middle' }}>
-                          <span className="badge">{u.hit_count}</span>
-                        </td>
-                        
-                        <td style={{ verticalAlign: 'middle' }}>
-                          <small>{new Date(u.created_at).toLocaleDateString('id-ID')}</small>
-                        </td>
-                        
-                        <td className="text-center" style={{ verticalAlign: 'middle' }}>
-                          <button className="btn btn-default btn-sm" onClick={() => handleCopy(u.id)} title="Copy Link" style={{ marginRight: '5px' }}>
-                            <span className="glyphicon glyphicon-copy"></span>
-                          </button>
-                          
-                          {/* TOMBOL EDIT KHUSUS V1 */}
-                          {u.mode === 'v1' && (
-                            <button className="btn btn-info btn-sm" onClick={() => setEditModal({ show: true, id: u.id, target_url: decodedUrl })} title="Edit" style={{ marginRight: '5px' }}>
-                              <span className="glyphicon glyphicon-edit"></span>
-                            </button>
-                          )}
-                          
-                          <button className="btn btn-danger btn-sm" onClick={() => setDeleteModal({ show: true, id: u.id })} title="Hapus">
-                            <span className="glyphicon glyphicon-trash"></span>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* PAGINATION */}
-          <div className="panel-footer text-center">
-            <button className="btn btn-default btn-sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
-              <span className="glyphicon glyphicon-chevron-left"></span> Prev
-            </button>
-            <span style={{ margin: '0 20px', fontWeight: 'bold' }}>
-              Halaman {page} / {totalPages}
-            </span>
-            <button className="btn btn-default btn-sm" disabled={page === totalPages || totalPages === 0} onClick={() => setPage(page + 1)}>
-              Next <span className="glyphicon glyphicon-chevron-right"></span>
-            </button>
-          </div>
-        </div>
-
-        {/* MODAL EDIT TARGET URL */}
-        {editModal.show && (
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-            <div className="panel panel-info" style={{ width: '100%', maxWidth: '500px', boxShadow: '0 5px 15px rgba(0,0,0,0.3)' }}>
-              <div className="panel-heading"><h3 className="panel-title">Edit Target URL (/{editModal.id})</h3></div>
-              <div className="panel-body">
-                <form onSubmit={saveEdit}>
-                  <div className="form-group">
-                    <label>URL Tujuan Baru</label>
-                    <input type="url" className="form-control" value={editModal.target_url} onChange={(e) => setEditModal({ ...editModal, target_url: e.target.value })} required />
-                  </div>
-                  <div className="text-right" style={{ marginTop: '20px' }}>
-                    <button type="button" className="btn btn-default" onClick={() => setEditModal({ show: false, id: "", target_url: "" })} style={{ marginRight: '10px' }}>Batal</button>
-                    <button type="submit" className="btn btn-info">Simpan</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* MODAL DELETE */}
-        {deleteModal.show && (
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-            <div className="panel panel-danger" style={{ width: '100%', maxWidth: '400px', boxShadow: '0 5px 15px rgba(0,0,0,0.3)' }}>
-              <div className="panel-heading"><h3 className="panel-title">Konfirmasi Hapus</h3></div>
-              <div className="panel-body text-center" style={{ padding: '20px' }}>
-                <p>Yakin ingin menghapus tautan <strong>/{deleteModal.id}</strong>?</p>
-                <div style={{ marginTop: '20px' }}>
-                  <button className="btn btn-default" onClick={() => setDeleteModal({ show: false, id: "" })} style={{ marginRight: '10px' }}>Batal</button>
-                  <button className="btn btn-danger" onClick={confirmDelete}>Ya, Hapus</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
       </div>
+
+      {/* AREA STATISTIK MURNI BOOTSTRAP */}
+      <div className="row">
+        <div className="col-md-4 col-sm-4 col-xs-12">
+          <div className="panel panel-info">
+            <div className="panel-heading text-center">
+              <h3 className="panel-title"><span className="glyphicon glyphicon-link"></span> Total Tautan</h3>
+            </div>
+            <div className="panel-body text-center">
+              <h2 style={{ margin: 0, fontWeight: 'bold' }}>{stats.totalLinks}</h2>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-md-4 col-sm-4 col-xs-12">
+          <div className="panel panel-success">
+            <div className="panel-heading text-center">
+              <h3 className="panel-title"><span className="glyphicon glyphicon-hand-up"></span> Total Pengunjung</h3>
+            </div>
+            <div className="panel-body text-center">
+              <h2 style={{ margin: 0, fontWeight: 'bold' }}>{stats.totalClicks}</h2>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-md-4 col-sm-4 col-xs-12">
+          <div className="panel panel-warning">
+            <div className="panel-heading text-center">
+              <h3 className="panel-title"><span className="glyphicon glyphicon-picture"></span> Total Gambar</h3>
+            </div>
+            <div className="panel-body text-center">
+              <h2 style={{ margin: 0, fontWeight: 'bold' }}>{stats.totalImages}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* NOTIFIKASI */}
+      {msg.text && (
+        <div className={`alert alert-${msg.type} alert-dismissible`}>
+          <strong>Info:</strong> {msg.text}
+        </div>
+      )}
+
+      {/* TABEL DATA MURNI BOOTSTRAP */}
+      <div className="row">
+        <div className="col-md-12">
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <h3 className="panel-title"><span className="glyphicon glyphicon-list-alt"></span> Daftar Link Aktif</h3>
+            </div>
+            
+            {/* table-responsive bawaan Bootstrap ditempel persis di sini */}
+            <div className="table-responsive">
+              <table className="table table-bordered table-striped table-hover" style={{ margin: 0, whiteSpace: 'nowrap' }}>
+                <thead>
+                  <tr className="active">
+                    <th>ID URL</th>
+                    <th>Judul Meta</th>
+                    <th>URL Tujuan</th>
+                    <th className="text-center">Mode</th>
+                    <th className="text-center">Klik</th>
+                    <th>Tgl Dibuat</th>
+                    <th className="text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr><td colSpan="7" className="text-center" style={{ padding: '30px' }}><div className="spinner" style={{ margin:'auto' }}></div></td></tr>
+                  ) : urls.length === 0 ? (
+                    <tr><td colSpan="7" className="text-center" style={{ padding: '30px' }}>Belum ada data tautan.</td></tr>
+                  ) : (
+                    urls.map((u) => {
+                      const decodedUrl = decodeUrlSafe(u.target_url);
+                      return (
+                        <tr key={u.id}>
+                          <td style={{ verticalAlign: 'middle' }}>
+                            <a href={`/${u.id}`} target="_blank"><strong>/{u.id}</strong></a>
+                          </td>
+                          <td style={{ verticalAlign: 'middle', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }} title={u.title || "Tanpa Judul"}>
+                            {u.title || "-"}
+                          </td>
+                          <td style={{ verticalAlign: 'middle', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }} title={decodedUrl}>
+                            <a href={decodedUrl} target="_blank" className="text-muted">{decodedUrl}</a>
+                          </td>
+                          <td className="text-center" style={{ verticalAlign: 'middle' }}>
+                            <span className={`label ${u.mode === 'v1' ? 'label-primary' : 'label-success'}`}>
+                              {u.mode.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="text-center" style={{ verticalAlign: 'middle' }}>
+                            <span className="badge">{u.hit_count}</span>
+                          </td>
+                          <td style={{ verticalAlign: 'middle' }}>
+                            <small>{new Date(u.created_at).toLocaleDateString('id-ID')}</small>
+                          </td>
+                          <td className="text-center" style={{ verticalAlign: 'middle' }}>
+                            <button className="btn btn-default btn-sm" onClick={() => handleCopy(u.id)} title="Copy" style={{ marginRight: '5px' }}>
+                              <span className="glyphicon glyphicon-copy"></span>
+                            </button>
+                            {u.mode === 'v1' && (
+                              <button className="btn btn-info btn-sm" onClick={() => setEditModal({ show: true, id: u.id, target_url: decodedUrl })} title="Edit" style={{ marginRight: '5px' }}>
+                                <span className="glyphicon glyphicon-edit"></span>
+                              </button>
+                            )}
+                            <button className="btn btn-danger btn-sm" onClick={() => setDeleteModal({ show: true, id: u.id })} title="Hapus">
+                              <span className="glyphicon glyphicon-trash"></span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="panel-footer text-center">
+              <button className="btn btn-default btn-sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
+                <span className="glyphicon glyphicon-chevron-left"></span> Prev
+              </button>
+              <span style={{ margin: '0 15px', fontWeight: 'bold' }}>
+                Halaman {page} / {totalPages}
+              </span>
+              <button className="btn btn-default btn-sm" disabled={page === totalPages || totalPages === 0} onClick={() => setPage(page + 1)}>
+                Next <span className="glyphicon glyphicon-chevron-right"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* MODAL EDIT */}
+      {editModal.show && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div className="panel panel-info" style={{ width: '100%', maxWidth: '500px' }}>
+            <div className="panel-heading"><h3 className="panel-title">Edit Target URL (/{editModal.id})</h3></div>
+            <div className="panel-body">
+              <form onSubmit={saveEdit}>
+                <div className="form-group">
+                  <label>URL Tujuan Baru</label>
+                  <input type="url" className="form-control" value={editModal.target_url} onChange={(e) => setEditModal({ ...editModal, target_url: e.target.value })} required />
+                </div>
+                <div className="text-right" style={{ marginTop: '20px' }}>
+                  <button type="button" className="btn btn-default" onClick={() => setEditModal({ show: false, id: "", target_url: "" })} style={{ marginRight: '10px' }}>Batal</button>
+                  <button type="submit" className="btn btn-info">Simpan</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL HAPUS */}
+      {deleteModal.show && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div className="panel panel-danger" style={{ width: '100%', maxWidth: '400px' }}>
+            <div className="panel-heading"><h3 className="panel-title">Konfirmasi Hapus</h3></div>
+            <div className="panel-body text-center">
+              <p>Yakin ingin menghapus tautan <strong>/{deleteModal.id}</strong>?</p>
+              <div style={{ marginTop: '20px' }}>
+                <button className="btn btn-default" onClick={() => setDeleteModal({ show: false, id: "" })} style={{ marginRight: '10px' }}>Batal</button>
+                <button className="btn btn-danger" onClick={confirmDelete}>Ya, Hapus</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
