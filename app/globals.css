@@ -1,0 +1,44 @@
+/* Pengaturan dasar untuk body */
+body {
+  background-color: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* * Kelas utilitas pembungkus utama.
+ * Memastikan area konten tidak terlalu lebar (maksimal 800px) 
+ * dan memiliki jarak (padding) yang cukup dari tepi kiri-kanan layar.
+ */
+.trim-box {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 15px; 
+}
+
+/* * Kelas custom untuk Card/Box.
+ * Menggunakan border-radius standar dan padding yang proporsional 
+ * agar elemen di dalamnya tidak terasa sesak.
+ */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+/* * Penyesuaian tambahan (opsional) untuk jarak antar form-group 
+ * jika Anda merasa bawaan Bootstrap 3 terlalu rapat.
+ */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* * Memastikan gambar responsif di dalam kontainer apapun
+ */
+img {
+  max-width: 100%;
+  height: auto;
+}
