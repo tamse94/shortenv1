@@ -1,52 +1,47 @@
 import { turso } from "@/lib/turso";
-import { decodeId } from "@/lib/encoder";
+import { decodeUrl } from "@/lib/encoder";
 import { redirect } from "next/navigation";
 
-// Perintah agar Vercel tidak mengecek database saat proses build (penting!)
 export const dynamic = 'force-dynamic';
 
+export async function generateMetadata({ params }) {
+  const res = await turso.execute({
+    sql: "SELECT title, description, image_url FROM urls WHERE id = ?",
+    args: [params.id]
+  });
+  const data = res.rows[0];
+  if (!data) return { title: "404 Not Found" };
+  return {
+    title: data.title || "Redirecting...",
+    description: data.description || "Silahkan tunggu sebentar.",
+    openGraph: {
+      title: data.title,
+      description: data.description,
+      images: [data.image_url],
+    },
+  };
+}
+
 export default async function RedirectPage({ params }) {
-  const { id } = params;
+  const res = await turso.execute({
+    sql: "SELECT target_url FROM urls WHERE id = ?",
+    args: [params.id]
+  });
+  const data = res.rows[0];
+  if (!data) redirect("/");
 
-  try {
-    // 1. Dekode ID dari URL (Misal: 'abc' jadi 1)
-    const originalId = decodeId(id);
+  await turso.execute({
+    sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?",
+    args: [params.id]
+  });
 
-    // 2. Ambil data URL target dari Turso
-    const res = await turso.execute({
-      sql: "SELECT target_url, mode FROM urls WHERE id = ?",
-      args: [originalId],
-    });
-
-    const data = res.rows[0];
-
-    // 3. Jika ID tidak ditemukan di database, lempar ke halaman 404 atau Home
-    if (!data) {
-      redirect("/");
-    }
-
-    // 4. Update jumlah klik (Hit Count) secara background
-    // Kita tidak pakai 'await' di sini supaya user langsung pindah tanpa nunggu update selesai
-    turso.execute({
-      sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?",
-      args: [originalId],
-    });
-
-    // 5. Eksekusi Redirect berdasarkan mode (v1 atau v2)
-    // Untuk saat ini kita buat redirect langsung dulu
-    if (data.target_url) {
-      redirect(data.target_url);
-    }
-
-  } catch (error) {
-    console.error("Redirect Error:", error);
-    redirect("/");
-  }
-
-  // Fallback jika terjadi sesuatu yang tidak diinginkan
+  const target = decodeUrl(data.target_url);
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <p>Redirecting...</p>
+    <div className="text-center" style={{ marginTop: '100px' }}>
+      <h3>Menuju Link Tujuan...</h3>
+      <script dangerouslySetInnerHTML={{
+        __html: `setTimeout(() => { window.location.href = "${target}"; }, 1500);`
+      }} />
     </div>
   );
 }
