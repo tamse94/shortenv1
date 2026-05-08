@@ -1,6 +1,7 @@
 import { turso } from "@/lib/turso";
 import { decodeUrl } from "@/lib/encoder";
-import { redirect } from "next/navigation";
+// Tambahkan import notFound di sini
+import { redirect, notFound } from "next/navigation"; 
 import { headers } from "next/headers";
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +14,11 @@ export default async function RedirectPage({ params }) {
     args: [id]
   });
   const urlData = urlRes.rows[0];
-  if (!urlData) redirect("/");
+  
+  // JIKA DATA TIDAK ADA DI DATABASE, LANGSUNG PANGGIL HALAMAN 404
+  if (!urlData) {
+    notFound(); 
+  }
 
   const setRes = await turso.execute("SELECT key, value FROM settings");
   const sys = {};
@@ -30,15 +35,11 @@ export default async function RedirectPage({ params }) {
     args: [id]
   });
 
-  // JIKA FITUR FORCE EXTERNAL ON & DI DALAM SOSMED
-  // Kita pakai sistem Intent untuk panggil popup bawaan OS (Android Chrome)
   if (sys.force_external === "on" && isInAppBrowser) {
     return (
       <script dangerouslySetInnerHTML={{
         __html: `
-          // Ambil URL halaman ini tanpa https://
           var currentUrl = window.location.href.replace(/^https?:\\/\\//, '');
-          // Trik Intent URI untuk maksa buka Chrome eksternal
           var intentUrl = "intent://" + currentUrl + "#Intent;scheme=https;package=com.android.chrome;end";
           window.location.replace(intentUrl);
         `
@@ -46,34 +47,18 @@ export default async function RedirectPage({ params }) {
     );
   }
 
-  // JIKA V1: Redirect Langsung
   if (urlData.mode === "v1") {
     redirect(target);
   }
 
-  // JIKA V2: Safelink & Slot Iklan
   return (
     <div className="redirect-container">
-      
-      {/* ADS HEAD */}
       {sys.ads_head && <div dangerouslySetInnerHTML={{ __html: sys.ads_head }} />}
 
       <div className="redirect-card">
-        
-        {/* ADS BODY */}
-        {sys.ads_body && (
-          <div style={{ marginBottom: '15px' }} dangerouslySetInnerHTML={{ __html: sys.ads_body }} />
-        )}
-
-        {/* ADS MOBILE ONLY */}
-        {sys.ads_mobile && (
-          <div className="visible-xs" style={{ marginBottom: '15px' }} dangerouslySetInnerHTML={{ __html: sys.ads_mobile }} />
-        )}
-        
-        {/* ADS DESKTOP ONLY */}
-        {sys.ads_desktop && (
-          <div className="hidden-xs" style={{ marginBottom: '15px' }} dangerouslySetInnerHTML={{ __html: sys.ads_desktop }} />
-        )}
+        {sys.ads_body && <div style={{ marginBottom: '15px' }} dangerouslySetInnerHTML={{ __html: sys.ads_body }} />}
+        {sys.ads_mobile && <div className="visible-xs" style={{ marginBottom: '15px' }} dangerouslySetInnerHTML={{ __html: sys.ads_mobile }} />}
+        {sys.ads_desktop && <div className="hidden-xs" style={{ marginBottom: '15px' }} dangerouslySetInnerHTML={{ __html: sys.ads_desktop }} />}
 
         {urlData.image_url && <img src={urlData.image_url} alt={urlData.title} className="redirect-image" />}
         <h1 className="redirect-title">{urlData.title || "Tautan Anda Sudah Siap"}</h1>
@@ -99,10 +84,7 @@ export default async function RedirectPage({ params }) {
           Kunjungi Tautan (Get Link)
         </a>
 
-        {/* ADS FOOTER */}
-        {sys.ads_footer && (
-          <div style={{ marginTop: '20px' }} dangerouslySetInnerHTML={{ __html: sys.ads_footer }} />
-        )}
+        {sys.ads_footer && <div style={{ marginTop: '20px' }} dangerouslySetInnerHTML={{ __html: sys.ads_footer }} />}
 
         <script dangerouslySetInnerHTML={{
           __html: `
@@ -112,7 +94,6 @@ export default async function RedirectPage({ params }) {
             }, 3000);
           `
         }} />
-
       </div>
     </div>
   );
