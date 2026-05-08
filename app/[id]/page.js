@@ -72,9 +72,6 @@ export default async function RedirectPage({ params }) {
       <link rel="stylesheet" href="/redirect.css" />
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-      {/* Script Iklan Head */}
-      {sys.ads_head && <div dangerouslySetInnerHTML={{ __html: sys.ads_head }} />}
-
       {/* NAVBAR CUSTOM V2 */}
       <nav className="navbar-custom clearfix">
         <a href="/" className="navbar-brand-custom">
