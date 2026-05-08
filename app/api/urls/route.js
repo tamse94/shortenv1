@@ -1,16 +1,31 @@
 import { turso } from "@/lib/turso";
 import { NextResponse } from "next/server";
 import { encodeUrl } from "@/lib/encoder";
+import { configureCloudinary } from "@/lib/cloudinary";
+
+// Fungsi untuk mengekstrak ID Gambar dari URL Cloudinary
+function extractPublicId(url) {
+  try {
+    const parts = url.split('/upload/');
+    if (parts.length > 1) {
+      const pathWithVersion = parts[1];
+      const pathWithoutVersion = pathWithVersion.replace(/^v\d+\//, ''); // Hapus versi (v123456/)
+      return pathWithoutVersion.substring(0, pathWithoutVersion.lastIndexOf('.')); // Hapus ekstensi (.jpg)
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
 
 // AMBIL DATA & STATISTIK (GET)
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page")) || 1;
-    const limit = 10; // 10 data per halaman
+    const limit = 10;
     const offset = (page - 1) * limit;
 
-    // Hitung Statistik
     const statRes = await turso.execute(`
       SELECT 
         COUNT(*) as total_links, 
@@ -20,7 +35,6 @@ export async function GET(req) {
     `);
     const stats = statRes.rows[0];
 
-    // Ambil Data Pagination
     const dataRes = await turso.execute({
       sql: "SELECT * FROM urls ORDER BY created_at DESC LIMIT ? OFFSET ?",
       args: [limit, offset]
@@ -56,14 +70,34 @@ export async function PUT(req) {
   }
 }
 
-// HAPUS URL (DELETE)
+// HAPUS URL DAN GAMBAR CLOUDINARY (DELETE)
 export async function DELETE(req) {
   try {
     const { id } = await req.json();
+
+    // 1. Cek apakah link ini punya gambar
+    const imgRes = await turso.execute({
+      sql: "SELECT image_url FROM urls WHERE id = ?",
+      args: [id]
+    });
+    
+    const imageUrl = imgRes.rows[0]?.image_url;
+
+    // 2. Jika ada gambar, hapus dari Cloudinary dulu
+    if (imageUrl) {
+      const publicId = extractPublicId(imageUrl);
+      if (publicId) {
+        const cloudinary = await configureCloudinary();
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    // 3. Baru hapus data dari database
     await turso.execute({
       sql: "DELETE FROM urls WHERE id = ?",
       args: [id]
     });
+    
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message });
