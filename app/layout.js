@@ -41,7 +41,7 @@ export async function generateMetadata() {
       url: '/',
       siteName: siteName,
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: siteName }] : [],
-      locale: 'id_ID',
+      locale: 'en_EN',
       type: 'website',
     },
     twitter: {
@@ -63,7 +63,7 @@ export default async function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
-        
+        <meta name="monetag" content="040fc680c5a16e17f2d1616e679831de" />
         {/* CSS ditaruh di head aman karena gak nge-block render sebanyak JS */}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
       </head>
