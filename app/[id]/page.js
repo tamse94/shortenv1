@@ -107,7 +107,7 @@ export default async function RedirectPage({ params }) {
             <div id="step-1">
               <h3 className="skip-title">How Can I Skip This Page?</h3>
               <div className="text-fallback">
-                <a href={target}>click here</a><br/>
+                <a href={config.referralLink}>click here</a><br/>
                 if the process does not start automatically
               </div>
               <button id="btn-hw" className="btn btn-continue">Click here to continue</button>
@@ -116,7 +116,7 @@ export default async function RedirectPage({ params }) {
             {/* STEP 2: Timer & Iklan */}
             <div id="step-2" style={{ display: 'none' }}>
               <div className="ad-slot-box">
-                <span>Advertisement</span>
+                <span></span>
                 {/* Sisipkan Iklan Berdasarkan Perangkat */}
                 {sys.ads_mobile && <div className="visible-xs" dangerouslySetInnerHTML={{ __html: sys.ads_mobile }} />}
                 {sys.ads_desktop && <div className="hidden-xs" dangerouslySetInnerHTML={{ __html: sys.ads_desktop }} />}
