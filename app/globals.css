@@ -87,3 +87,81 @@ img {
   border-bottom: 1px dashed #eee;
   padding-bottom: 10px;
 }
+
+/* =========================================
+   CSS KHUSUS HALAMAN LEGAL (DMCA, Privacy, Terms)
+   ========================================= */
+.legal-wrapper {
+  max-width: 850px;
+  margin: 40px auto 80px auto;
+  padding: 30px 20px; /* Jarak aman kiri-kanan di HP biar gak mepet layar */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Bikin keliatan kayak kertas dokumen */
+  border: 1px solid #e3e8ee;
+}
+
+.legal-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eeeeee;
+}
+
+.legal-header h1 {
+  font-weight: 800;
+  color: #2c3e50;
+  font-size: 32px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.legal-header .legal-date {
+  color: #777;
+  font-size: 14px;
+  margin: 0;
+}
+
+.legal-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #444444;
+  word-wrap: break-word;
+}
+
+/* Di HP, teks rata kiri biar gak bolong-bolong spasinya */
+.legal-content p {
+  margin-bottom: 16px;
+  text-align: left; 
+}
+
+.legal-content h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-top: 35px;
+  margin-bottom: 15px;
+}
+
+.legal-content ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.legal-content li {
+  margin-bottom: 8px;
+}
+
+/* Di Desktop/Layar Lebar, baru pakai Justify biar rapi kayak koran */
+@media (min-width: 768px) {
+  .legal-wrapper {
+    padding: 40px 50px;
+    margin-top: 50px;
+  }
+  .legal-header h1 {
+    font-size: 38px;
+  }
+  .legal-content p {
+    text-align: justify;
+  }
+}
+
