@@ -6,6 +6,7 @@ import { config } from "@/lib/config";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State buat fitur hide/show password
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
@@ -15,7 +16,6 @@ export default function LoginPage() {
     setMessage({ type: "", text: "" });
 
     try {
-      // Nembak ke API Auth untuk verifikasi
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -25,10 +25,8 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Jika sukses, redirect ke dashboard
         window.location.href = "/dasbord";
       } else {
-        // Jika gagal, tampilkan pesan error tanpa alert()
         setLoading(false);
         setMessage({ 
           type: "danger", 
@@ -46,7 +44,8 @@ export default function LoginPage() {
 
   return (
     <div className="row" style={{ marginTop: '40px' }}>
-      <div className="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+      {/* Grid diperlebar menjadi col-md-6 dan col-sm-8 agar box tidak terlalu sempit */}
+      <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
         
         <div className="panel panel-default" style={{ 
           borderRadius: '12px', 
@@ -54,7 +53,7 @@ export default function LoginPage() {
           border: '1px solid #e3e8ee',
           overflow: 'hidden'
         }}>
-          <div className="panel-body" style={{ padding: '40px 30px' }}>
+          <div className="panel-body" style={{ padding: '40px 40px' }}>
             
             {/* HEADER LOGO */}
             <div className="text-center" style={{ marginBottom: '30px' }}>
@@ -98,19 +97,35 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group" style={{ marginBottom: '25px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <label style={{ fontWeight: '600', color: '#546e7a', marginBottom: '8px' }}>Password</label>
-                  <a href="#" style={{ fontSize: '13px', color: '#337ab7', fontWeight: '500' }}>Forgot?</a>
+                {/* Link Forgot Password Dihapus */}
+                <label style={{ fontWeight: '600', color: '#546e7a', marginBottom: '8px', display: 'block' }}>Password</label>
+                
+                {/* Wrapper relative untuk menaruh icon mata */}
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    className="form-control" 
+                    placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required 
+                    style={{ height: '45px', borderRadius: '8px', border: '1px solid #d1d9e2', paddingRight: '40px' }}
+                  />
+                  {/* Ikon Mata (Show/Hide Toggle) */}
+                  <span 
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={`glyphicon ${showPassword ? 'glyphicon-eye-close' : 'glyphicon-eye-open'}`}
+                    style={{ 
+                      position: 'absolute', 
+                      right: '15px', 
+                      top: '50%', 
+                      transform: 'translateY(-50%)', 
+                      cursor: 'pointer', 
+                      color: '#999',
+                      fontSize: '18px'
+                    }}
+                  ></span>
                 </div>
-                <input 
-                  type="password" 
-                  className="form-control" 
-                  placeholder="••••••••" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required 
-                  style={{ height: '45px', borderRadius: '8px', border: '1px solid #d1d9e2' }}
-                />
               </div>
 
               <button 
