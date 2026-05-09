@@ -35,10 +35,16 @@ export default async function RedirectPage({ params }) {
   const target = decodeUrl(urlData.target_url);
 
   // 4. Tambah Hit Counter
-  turso.execute({
-    sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?",
-    args: [id]
-  });
+    // 1. Ambil data User-Agent dari pengunjung
+  const userAgent = headerList.get('user-agent') || '';
+  
+  // 2. Bikin daftar pendeteksi Bot (WA, FB, Telegram, Google, dll)
+  const isBot = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit|whatsapp|telegrambot|twitterbot|discordbot/i.test(userAgent);
+
+  // 3. Update Hit Count HANYA JIKA BUKAN BOT
+  if (!isBot) {
+    turso.execute({ sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?", args: [id] });
+  }
 
   // 5. Anti In-App Browser (Buka otomatis di Chrome asli)
   if (sys.force_external === "on" && isInAppBrowser) {
