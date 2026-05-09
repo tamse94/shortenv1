@@ -25,23 +25,21 @@ export default async function RedirectPage({ params }) {
   const sys = {};
   setRes.rows.forEach(r => sys[r.key] = r.value);
 
-  // 3. Tarik Header & Bersihkan Domain (Hanya domain.com tanpa https/www)
+  // 3. Tarik Header & Deteksi User/Bot
   const headerList = headers();
   const userAgent = headerList.get('user-agent') || '';
   const host = headerList.get('host') || 'domain.com';
+  
+  // Bersihkan Domain (Hanya domain.com tanpa https/www)
   const plainDomain = host.replace(/^https?:\/\//, '').replace(/^www\./, '');
 
+  // Logika Pendeteksi
   const isInAppBrowser = /FBAN|FBAV|Instagram|Line|TikTok|Twitter|Snapchat/i.test(userAgent);
+  const isBot = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit|whatsapp|telegrambot|twitterbot|discordbot/i.test(userAgent);
+  
   const target = decodeUrl(urlData.target_url);
 
-  // 4. Tambah Hit Counter
-    // 1. Ambil data User-Agent dari pengunjung
-  const userAgent = headerList.get('user-agent') || '';
-  
-  // 2. Bikin daftar pendeteksi Bot (WA, FB, Telegram, Google, dll)
-  const isBot = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit|whatsapp|telegrambot|twitterbot|discordbot/i.test(userAgent);
-
-  // 3. Update Hit Count HANYA JIKA BUKAN BOT
+  // 4. Update Hit Counter HANYA JIKA BUKAN BOT
   if (!isBot) {
     turso.execute({ sql: "UPDATE urls SET hit_count = hit_count + 1 WHERE id = ?", args: [id] });
   }
@@ -64,7 +62,7 @@ export default async function RedirectPage({ params }) {
     redirect(target);
   }
 
-  // 7. Kalau Mode V2, Tampilkan Landing Page HTML Lo
+  // 7. Kalau Mode V2, Tampilkan Landing Page HTML
   return (
     <>
       {/* TRIK AJAIB: Matikan Navbar & Footer bawaan dari layout.js khusus di halaman ini */}
@@ -77,8 +75,9 @@ export default async function RedirectPage({ params }) {
       {/* Panggil File CSS Custom lo */}
       <link rel="stylesheet" href="/redirect.css" />
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-      {/* Script Iklan Head */}
-      {sys.ads_head && <div dangerouslySetInnerHTML={{ __html: sys.ads_head }} />}
+      
+      {/* Script Iklan Head SUDAH DIHAPUS DARI SINI (KARENA ADA DI LAYOUT) */}
+
       {/* NAVBAR CUSTOM V2 */}
       <nav className="navbar-custom clearfix">
         <a href="/" className="navbar-brand-custom">
